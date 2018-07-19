@@ -3,6 +3,8 @@
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
 # with command line options: SingleElectronPt10_cfi.py -s GEN,SIM,DIGI,L1 --pileup=NoPileUp --geometry DB --conditions=auto:startup -n 1 --no_exec
+# Modified by @hyunyong and @andjuo, 2018
+
 import FWCore.ParameterSet.Config as cms
 
 
@@ -160,16 +162,17 @@ process.tmtFilter.mpList = cms.untracked.vint32(options.mps)
 # dump raw data
 process.dumpRaw = cms.EDAnalyzer( 
     "DumpFEDRawDataProduct",
-    token = cms.untracked.InputTag("rawDataCollector"),
+    label = cms.untracked.string("rawDataCollector"),
     feds = cms.untracked.vint32 ( 1467 ),
     dumpPayload = cms.untracked.bool ( options.dumpRaw )
 )
 
 # raw to digi
 process.load('EventFilter.GEMRawToDigi.muonGEMDigis_cfi')
-process.load('EventFilter.GEMRawToDigi.GEMSQLiteCabling_cfi')
+#process.load('EventFilter.GEMRawToDigi.GEMSQLiteCabling_cfi')
 process.muonGEMDigis.InputLabel = cms.InputTag('rawDataCollector')
 process.muonGEMDigis.useDBEMap = True
+process.muonGEMDigis.unPackStatusDigis = True  # of interest for GEM DQM
 
 #process.load('Geometry.GEMGeometryBuilder.gemGeometry_cfi')
 process.load('RecoLocalMuon.GEMRecHit.gemRecHits_cfi')
